@@ -28,7 +28,7 @@ from astropy.visualization.mpl_normalize import ImageNormalize
 
 #I think I understand everything this bit of code is trying to do. I'm not exactly sure what the "*" represents, but I'd bet it's another tool like numpy or matplot lib. These few lines basically brings in everything you'd need to do basic photometry.
 
-#After looking back at this code the next day, Marta showed me that "datasets" is not a command, but probably a practice set of data on the internet somewhere. 
+#After looking back at this code the next day, Marta showed me that "datasets" is not a command, but probably a practice set of data on the internet somewhere.
 
 ########
 
@@ -58,4 +58,4 @@ from photutils import DAOStarFinder
 mean, median, std = sigma_clipped_stats(data,sigma=3.0,iters=5)
 print(mean, median, std)"""
 
-#Trying to run the original code in the Jupyter notebook gives the error "ImportError: cannot import name 'Daofind'," which I think is because it's defined in a different command line in the Jupyter notebook. Trying to run the code as is in the command terminal gives the exact same error. Googling revealed that the true name of the command is DAOStarFinder. Running the program in Jupyter and the terminal give the same result, though I do have to unquote the definition of "data" and "hdu" from the last exercise. The result is noted in the blog. Another thing to note is that running the terminal takes more time than the Jupyter notebook. The result of this exercise is recorded under Day Two on my Blog as
+#Trying to run the original code in the Jupyter notebook gives the error "ImportError: cannot import name 'Daofind'," which I think is because it's defined in a different command line in the Jupyter notebook. Trying to run the code as is in the command terminal gives the exact same error. Googling revealed that the true name of the command is DAOStarFinder. Running the program in Jupyter and the terminal give the same result, though I do have to unquote the definition of "data" and "hdu" from the last exercise. The result is noted in the blog. Another thing to note is that running the terminal takes more time than the Jupyter notebook. The result of this exercise is recorded under Day Two on my Blog as Exercise Two Results. 
