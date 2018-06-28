@@ -36,10 +36,10 @@ from astropy.visualization.mpl_normalize import ImageNormalize
 
 hdu = datasets.load_star_image()
 data = hdu.data[0:400, 0:400]
-"""norm = ImageNormalize(stretch=LogStretch()
+norm = ImageNormalize(stretch=LogStretch())
 
 plt.imshow(data, cmap='Greys',origin='lower',norm=norm)
-plt.show() #added by me"""
+"""plt.show() #added by me"""
 
 #I can run this second bit of code (w/o the part added by me) in the Jupyter notebook on its own, and it gives the image titled "Exercise One Results" in my blog post. I can also run this code as is (with only what's written above this line, including the show command) and get the same exact image out.
 
@@ -61,8 +61,8 @@ mean, median, std = sigma_clipped_stats(data,sigma=3.0,iters=5)
 
 daofind = DAOStarFinder(fwhm=3.0, threshold=5*std)
 sources = daofind(data - median) #Original line: 'sources = DAOStarFinder(data - median, fwhm=3.0, threshold=5.*std)'""" replaced 62-63
-log = open("/Users/computationalphysics/Desktop/githubstuff/exercise_2_pt2.txt", "w")
-print(sources, file = log)
+"""log = open("/Users/computationalphysics/Desktop/githubstuff/exercise_2_pt2.txt", "w") #added by me to get the data as a text file
+print(sources, file = log)""" #original line: 'print(sources)'
 
 #Running this next bit of code in the Jupyter notebook, which a unique command line in the notebook, requires a lot of copying and pasting from previous command lines to make work. However, as long as I have the right bits of code unquoted in this text file, which I already had from the first exercises, the code works in the terminal after fixing the argument of DAOStarFinder by removing "data - median" from the argument. I'm not sure exactly how the function works with that removed or where it's pulling data from, unless it remembers from previous lines of code.
 
@@ -70,17 +70,19 @@ print(sources, file = log)
 
 #After a night of rest, I came back to the bit of code above because I knew that the result I got yesterday (Day Three on my blog) wasn't right. After a bit of googling, I ended up on <photutils.readthedocs.io> and read up on how DAOStarFinder works, and found a sample bit of code. I heard about the command daofind and couldn't figure out how to use it, but this sample code gave me the syntax. Now I get a table as the output results, listed under "Day Four Exercise 2 pt.2.1".
 
-"""from photutils import CircularAperture
+from photutils import CircularAperture
 
-positions = (sources[xcentroid], source[ycentroid])
+x = (sources['xcentroid'])
+y = (sources['ycentroid'])
+positions = (x,y)
 apertures = CircularAperture(positions, r=5.)
 apertures.plot(color='blue', lw=1.5, alpha=0.5)
-plt.show()""" #added by me
+plt.show() #added by me
 
 #Again, running this next bit of code directly from the Jupyter notebook would require a lot of copying and psting from earlier lines so the notebook note what all is being referenced, but simply keeping my old code in this text file allows me to run the program with less editing. From now on, I'm focusing on running the code through the terminal.
 
-#Trying to run this code through the terminal gives the error "TypeError: 'DAOStarFinder' object is not subscriptable". After, googling, I'm very confused. I now think I get why the error is occuring (the data given by DAOStarFinder is 2-Dimensional, and somehow the line 'positions = (sources['xcentroid'], sources['ycentroid'])' is not breaking apart the x and y data successfully), but have no idea how to fix it.
+#Trying to run this code through the terminal gives the error "TypeError: 'DAOStarFinder' object is not subscriptable". After, googling, I'm very confused. I think I get why the error is occuring (the data given by DAOStarFinder is 2-Dimensional, and somehow the line 'positions = (sources['xcentroid'], sources['ycentroid'])' is not breaking apart the x and y data successfully), but have no idea how to fix it.
 
 #I now think that the error is from the last part of the exercise, line 62 in the document, but after trying a couple ways of modifying the argument of DAOStarFinder, I kept getting either the same error as before or the new error.
 
-#I was right that the error was a carryover from the last exercise and can
+#I was right that the error was a carryover from the last exercise and have now fixed it. I get a data table as the result of Exercise Two pt.2. Now, when trying to run the code in the terminal, I get a syntax error at line 75.
