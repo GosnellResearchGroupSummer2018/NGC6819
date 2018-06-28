@@ -61,15 +61,18 @@ mean, median, std = sigma_clipped_stats(data,sigma=3.0,iters=5)
 
 daofind = DAOStarFinder(fwhm=3.0, threshold=5*std)
 sources = daofind(data - median) #Original line: 'sources = DAOStarFinder(data - median, fwhm=3.0, threshold=5.*std)'""" replaced 62-63
-print(sources)
+log = open("/Users/computationalphysics/Desktop/githubstuff/exercise_2_pt2.txt", "w")
+print(sources, file = log)
 
 #Running this next bit of code in the Jupyter notebook, which a unique command line in the notebook, requires a lot of copying and pasting from previous command lines to make work. However, as long as I have the right bits of code unquoted in this text file, which I already had from the first exercises, the code works in the terminal after fixing the argument of DAOStarFinder by removing "data - median" from the argument. I'm not sure exactly how the function works with that removed or where it's pulling data from, unless it remembers from previous lines of code.
 
 #Before I got a positive result, I kept getting the error "TypeError: __init__() got multiple values for argument 'threshold'". Googling told me that this error is often caused by not having the first argument of this type of function be 'self'. After experimenting, I tried putting "DAOStarFinder" and as the first argument of the same command and got a new error. This time it was "TypeError: __init__() got multiple values for argument 'fwhm'". I then tried removing the first argument altogether and got the result listed under Day Three, Exercise Two results pt. 2 on my blog.
 
+#After a night of rest, I came back to the bit of code above because I knew that the result I got yesterday (Day Three on my blog) wasn't right. After a bit of googling, I ended up on <photutils.readthedocs.io> and read up on how DAOStarFinder works, and found a sample bit of code. I heard about the command daofind and couldn't figure out how to use it, but this sample code gave me the syntax. Now I get a table as the output results, listed under "Day Four Exercise 2 pt.2.1".
+
 """from photutils import CircularAperture
 
-positions = (sources[xcentroid],source[ycentroid])
+positions = (sources[xcentroid], source[ycentroid])
 apertures = CircularAperture(positions, r=5.)
 apertures.plot(color='blue', lw=1.5, alpha=0.5)
 plt.show()""" #added by me
@@ -79,3 +82,5 @@ plt.show()""" #added by me
 #Trying to run this code through the terminal gives the error "TypeError: 'DAOStarFinder' object is not subscriptable". After, googling, I'm very confused. I now think I get why the error is occuring (the data given by DAOStarFinder is 2-Dimensional, and somehow the line 'positions = (sources['xcentroid'], sources['ycentroid'])' is not breaking apart the x and y data successfully), but have no idea how to fix it.
 
 #I now think that the error is from the last part of the exercise, line 62 in the document, but after trying a couple ways of modifying the argument of DAOStarFinder, I kept getting either the same error as before or the new error.
+
+#I was right that the error was a carryover from the last exercise and can
