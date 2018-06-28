@@ -1,4 +1,4 @@
-Xray source list: RA Dec CorrespondingHSTimages
+Xray source: RA, Dec CorrespondingHST/HLAimages (separated by spaces)
 X1: 19 41 14.08, 40 14 05.60 hst_11688_03_wfc3_uvis_f606w hst_11688_a7_wfc3_uvis_f814w hst_12669_03_wfc3_uvis_f814w
 X2: 19 41 29.19, 40 11 23.83 ib2o02020 ib2o06020 ib2oa6020 ibop02020 hst_11688_02_wfc3_uvis_f606w hst_11688_06_wfc3_uvis_f814w hst_11688_a6_wfc3_uvis_f814w hst_12669_02_wfc3_uvis_f814w
 X3: 19 41 25.41, 40 11 44.63 same as X2
