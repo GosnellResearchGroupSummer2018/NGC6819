@@ -2,7 +2,7 @@
 
 ########
 
-#Exercise: Set up code for running this program in the Mac terminal
+#Prelim Exercise: Set up code for running this program in the Mac terminal
 
 #Code added by me after googling:
 import numpy as np
@@ -32,11 +32,11 @@ from astropy.visualization.mpl_normalize import ImageNormalize
 
 ########
 
-#Exercise: Load an image
+#Exercise 1: Load an image
 
 hdu = datasets.load_star_image()
 data = hdu.data[0:400, 0:400]
-"""norm = ImageNormalize(stretch=LogStretch())
+"""norm = ImageNormalize(stretch=LogStretch()
 
 plt.imshow(data, cmap='Greys',origin='lower',norm=norm)
 plt.show() #added by me"""
@@ -49,7 +49,7 @@ plt.show() #added by me"""
 
 ###########
 
-#Exercise: Source Detection
+#Exercise 2: Source Detection
 
 from astropy.stats import sigma_clipped_stats
 from photutils import DAOStarFinder #Original line: from photutils import daofind
@@ -59,19 +59,20 @@ mean, median, std = sigma_clipped_stats(data,sigma=3.0,iters=5)
 
 #Trying to run the original code in the Jupyter notebook gives the error "ImportError: cannot import name 'Daofind'". Trying to run the code as is in the command terminal gives the exact same error. Googling revealed that the true name of the command is DAOStarFinder. After changing syntax, I get a good result. Running the program in Jupyter and the terminal give the same result, though I do have to unquote the definition of "data" and "hdu" from the last exercise for it to run in the terminal. The result is noted in the blog. Another thing to note is that running the terminal takes more time than the Jupyter notebook. The result of this exercise is recorded under Day Two on my Blog as Exercise Two Results pt. 1.
 
-sources = DAOStarFinder(fwhm=3.0, threshold=5*std) #Original line: 'sources = DAOStarFinder(data - median, fwhm=3.0, threshold=5.*std)'
-"""print(sources)"""
+daofind = DAOStarFinder(fwhm=3.0, threshold=5*std)
+sources = daofind(data - median) #Original line: 'sources = DAOStarFinder(data - median, fwhm=3.0, threshold=5.*std)'""" replaced 62-63
+print(sources)
 
-#Running this next bit of code in the Jupyter notebook, which a unique command line in the notebook, requires a lot of copying and pasting from previous command lines to make work. However, as long as I have the right bits of code unquoted in this text file, which I already had from the first part of this exercise, the code works in the terminal after fixing the argument of DAOStarFinder by removing "data - median" from the argument. I'm not sure exactly how the function works with that removed or where it's pulling data from, unless it remembers from previous lines of code.
+#Running this next bit of code in the Jupyter notebook, which a unique command line in the notebook, requires a lot of copying and pasting from previous command lines to make work. However, as long as I have the right bits of code unquoted in this text file, which I already had from the first exercises, the code works in the terminal after fixing the argument of DAOStarFinder by removing "data - median" from the argument. I'm not sure exactly how the function works with that removed or where it's pulling data from, unless it remembers from previous lines of code.
 
 #Before I got a positive result, I kept getting the error "TypeError: __init__() got multiple values for argument 'threshold'". Googling told me that this error is often caused by not having the first argument of this type of function be 'self'. After experimenting, I tried putting "DAOStarFinder" and as the first argument of the same command and got a new error. This time it was "TypeError: __init__() got multiple values for argument 'fwhm'". I then tried removing the first argument altogether and got the result listed under Day Three, Exercise Two results pt. 2 on my blog.
 
-from photutils import CircularAperture
+"""from photutils import CircularAperture
 
-positions = (sources['xcentroid'], sources['ycentroid'])
+positions = (sources[xcentroid],source[ycentroid])
 apertures = CircularAperture(positions, r=5.)
 apertures.plot(color='blue', lw=1.5, alpha=0.5)
-plt.show() #added by me
+plt.show()""" #added by me
 
 #Again, running this next bit of code directly from the Jupyter notebook would require a lot of copying and psting from earlier lines so the notebook note what all is being referenced, but simply keeping my old code in this text file allows me to run the program with less editing. From now on, I'm focusing on running the code through the terminal.
 
