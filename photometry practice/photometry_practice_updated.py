@@ -116,7 +116,7 @@ bkg_sum = bkg_mean * apertures_r3.area()
 final_phot_r3 = rawflux_r3['aperture_sum'] - bkg_sum
 """print(final_phot_r3)"""
 
-#Running this code gives a series of tables, but they're all leading up to a color map, so I will only post the color map this data generates on my blog under "Day Four Exercise 3 & 4 Results."
+#Running this code gives a series of tables, but they're all leading up to a color map, so I will only post the color map this data generates on my blog under "Day Four Exercise Three and Four Results."
 
 ########
 
