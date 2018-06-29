@@ -60,7 +60,7 @@ mean, median, std = sigma_clipped_stats(data,sigma=3.0,iters=5)
 #Trying to run the original code in the Jupyter notebook gives the error "ImportError: cannot import name 'Daofind'". Trying to run the code as is in the command terminal gives the exact same error. Googling revealed that the true name of the command is DAOStarFinder. After changing syntax, I get a good result. Running the program in Jupyter and the terminal give the same result, though I do have to unquote the definition of "data" and "hdu" from the last exercise for it to run in the terminal. The result is noted in the blog. Another thing to note is that running the terminal takes more time than the Jupyter notebook. The result of this exercise is recorded under Day Two on my Blog as Exercise Two Results pt. 1.
 
 daofind = DAOStarFinder(fwhm=3.0, threshold=5*std)
-sources = daofind(data - median) #Original line: 'sources = DAOStarFinder(data - median, fwhm=3.0, threshold=5.*std)'""" replaced 62-63
+sources = daofind(data - median) #Original line: 'sources = DAOStarFinder(data - median, fwhm=3.0, threshold=5.*std)'""" --replaced lines 62-63
 """log = open("/Users/computationalphysics/Desktop/githubstuff/exercise_2_pt2.txt", "w") #added by me to get the data as a text file
 print(sources, file = log)""" #original line: 'print(sources)'
 
@@ -73,11 +73,11 @@ print(sources, file = log)""" #original line: 'print(sources)'
 from photutils import CircularAperture
 
 x = (sources['xcentroid'])
-y = (sources['ycentroid'])
-positions = (x,y)
+y = (sources['xcentroid'])
+positions = (x,y) #Original line 'positions = (sources['xcentroid'], sources['xcentroid'])' --replaced lines 75-77
 apertures = CircularAperture(positions, r=5.)
 apertures.plot(color='blue', lw=1.5, alpha=0.5)
-plt.show() #added by me
+"""plt.show()""" #added by me
 
 #Again, running this next bit of code directly from the Jupyter notebook would require a lot of copying and psting from earlier lines so the notebook note what all is being referenced, but simply keeping my old code in this text file allows me to run the program with less editing. From now on, I'm focusing on running the code through the terminal.
 
@@ -85,4 +85,76 @@ plt.show() #added by me
 
 #I now think that the error is from the last part of the exercise, line 62 in the document, but after trying a couple ways of modifying the argument of DAOStarFinder, I kept getting either the same error as before or the new error.
 
-#I was right that the error was a carryover from the last exercise and have now fixed it. I get a data table as the result of Exercise Two pt.2. Now, when trying to run the code in the terminal, I get a syntax error at line 75.
+#I was right that the error was a carryover from the last exercise and have now fixed it. I get a data table as the result of Exercise Two pt.2. Now, when trying to run the code in the terminal, I get the error "TypeError: 'function' object is not subscriptable" at line 75. Google tells me that this means Python is still reading "sources" as a function since it was last defined that way in the code, so I have to redefine it as a variable. After doing this, I get the image on my blog under "Day Four Exercise Two Results Pt.3"
+
+########
+
+#Excercise 3: Aperture Photometry
+
+#This section corrects the fluxes of each star for the background flux of the sky.
+
+#Everywhere you see "x" or "y" in the following code, it's replacing "sources['xcentroid']" and "sources['ycentroid']" in the original code from the exercises.
+
+from photutils import CircularAnnulus
+from photutils import aperture_photometry
+
+apertures_r3 = CircularAperture((x, y), r=3.)
+
+phot_table = aperture_photometry(data, apertures_r3)
+"""print(phot_table)"""
+
+annulus_apertures = CircularAnnulus(positions, r_in=9., r_out=12.)
+rawflux_r3 = aperture_photometry(data, apertures_r3)
+bkgflux_table = aperture_photometry(data, annulus_apertures)
+
+bkg_mean = bkgflux_table['aperture_sum'] / annulus_apertures.area()
+"""print(bkg_mean)"""
+
+bkg_sum = bkg_mean * apertures_r3.area()
+"""print(bkg_sum)"""
+
+final_phot_r3 = rawflux_r3['aperture_sum'] - bkg_sum
+"""print(final_phot_r3)"""
+
+#Running this code gives a series of tables, but they're all leading up to a color map, so I will only post the color map this data generates on my blog under "Day Four Exercise 3 & 4 Results."
+
+########
+
+#Exercise 4: Aperture Corrections
+
+#This makes the flux correction more accurate by comparing the correction with a small aperture to the correction with a large aperture.
+
+apertures_r5 = CircularAperture((x, y), r=5.) #note the larger aperture
+rawflux_r5 = aperture_photometry(data, apertures_r5)
+
+bkg_sum = bkg_mean * apertures_r5.area()
+final_phot_r5 = rawflux_r5['aperture_sum'] - bkg_sum
+
+mag_r3 = -2.5*np.log10(final_phot_r3)
+mag_r5 = -2.5*np.log10(final_phot_r5)
+deltamag = mag_r3 - mag_r5
+
+plt.clf()
+plt.scatter(mag_r5,deltamag)
+
+plt.clf()
+plt.scatter(mag_r5,mag_r3-mag_r5,c='k',edgecolors='none')
+plt.axhline(ls='--',c='b')
+plt.xlim(-15,-8)
+plt.ylim(-1,1)
+plt.xlabel('Mag [r=5]',fontsize=18)
+plt.ylabel('$\Delta$mag',fontsize=18)
+
+mask = [(mag_r5>-13.)&(mag_r5<-11.)&(deltamag>0.)&(deltamag<0.4)]
+
+mean, median, std = sigma_clipped_stats(deltamag[mask], sigma=3.0, iters=5)
+apcor = median
+"""print(apcor)"""
+
+plt.axhline(apcor,ls='-',c='r')
+plt.show() #added by me
+
+final_phot =-2.5*np.log10(final_phot_r3) + apcor + 25.
+"""print(final_phot)"""
+
+#Running this code as is generates a color map for the field that is refenenced in "data" in line 38, but not without errors. You can see the color map under "Exercise Three and Four Results." Before changing "sources['xcentroid']" and "sources['ycentoroid']" to "x" and "y" (given their definitions in exercise Two, I got a different, prettier color map than after I changed the names. I'll have to trouble shoot this code tomorrow, however.
