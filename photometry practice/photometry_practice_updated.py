@@ -38,7 +38,7 @@ hdu = datasets.load_star_image()
 data = hdu.data[0:400, 0:400]
 norm = ImageNormalize(stretch=LogStretch())
 
-plt.imshow(data, cmap='Greys',origin='lower',norm=norm)
+plt.imshow(data, cmap='gray_r',origin='lower',norm=norm)
 """plt.show() #added by me"""
 
 #I can run this second bit of code (w/o the part added by me) in the Jupyter notebook on its own, and it gives the image titled "Exercise One Results" in my blog post. I can also run this code as is (with only what's written above this line, including the show command) and get the same exact image out.
@@ -73,11 +73,11 @@ print(sources, file = log)""" #original line: 'print(sources)'
 from photutils import CircularAperture
 
 x = (sources['xcentroid'])
-y = (sources['xcentroid'])
+y = (sources['ycentroid'])
 positions = (x,y) #Original line 'positions = (sources['xcentroid'], sources['xcentroid'])' --replaced lines 75-77
 apertures = CircularAperture(positions, r=5.)
 apertures.plot(color='blue', lw=1.5, alpha=0.5)
-"""plt.show()""" #added by me
+"""plt.show() #added by me"""
 
 #Again, running this next bit of code directly from the Jupyter notebook would require a lot of copying and psting from earlier lines so the notebook note what all is being referenced, but simply keeping my old code in this text file allows me to run the program with less editing. From now on, I'm focusing on running the code through the terminal.
 
@@ -98,7 +98,7 @@ apertures.plot(color='blue', lw=1.5, alpha=0.5)
 from photutils import CircularAnnulus
 from photutils import aperture_photometry
 
-apertures_r3 = CircularAperture((x, y), r=3.)
+apertures_r3 = CircularAperture(positions, r=3.)
 
 phot_table = aperture_photometry(data, apertures_r3)
 """print(phot_table)"""
