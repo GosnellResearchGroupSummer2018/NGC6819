@@ -7,8 +7,12 @@ from scipy import *
 from numpy import *
 from photutils import datasets
 #bring the data in.
-#I have tried to use one of the .fits hubble images here, but it returns the ufunc 'isfinite' error explained below. I think it is an issue with formatting, but am not sure right now (and am not super concerned as this is just to learn how to do photometry in general)
-#i am now using the make_100gaussians_image from photutils.datasets that they utilize in the readthedocs tutorial.
+#I have tried to use one of the .fits hubble images here, but it returns the ufunc
+#'isfinite' error explained below. I think it is an issue with formatting,
+#but am not sure right now (and am not super concerned as this is just to
+#learn how to do photometry in general)
+#i am now using the make_100gaussians_image from photutils.datasets
+#that they utilize in the readthedocs tutorial.
 #the data that wouldn't work: #data = "/Volumes/64FLASH/astro/MAST_2018-06-25T2014/HST/ib2o03020/ib2o03020_drc.fits"
 data = datasets.make_100gaussians_image()
 #define the mask function
