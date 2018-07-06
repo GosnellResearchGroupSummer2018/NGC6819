@@ -7,15 +7,19 @@ from numpy import *
 from photutils import datasets
 from photutils import DAOStarFinder
 from astropy.stats import mad_std
+from pandas import *
 #import data from background detection
 image = datasets.make_100gaussians_image()
-bkrd = loadtxt('sambdout.txt',usecols= 1,unpack=True)
-daofind = DAOStarFinder(fwhm=4., threshold=3.*bkrd)
-sources = daofind(image)
+bkrd,std = loadtxt('sambdout.txt',usecols= (1,2),unpack=True)
+#DAOStarFinder is a routine in photutils
+#fwhm sets the
+daofind = DAOStarFinder(fwhm=10., threshold=3.*std)
+# perform DAOStarFinder on the data with the median background subtracted
+sources = daofind(image-bkrd)
+#print the results of our daofind
 print(sources)
-log = open('samsdout.txt', "w")
-print(sources, file = log)
-close()
-#sourcea = array(sources)
-#sourcear = transpose(sourcea)
-#savetxt('samsdout.txt', [sourcear],fmt='%f')
+#to get the table into a savable format, I converted it into a pandas format
+samsdout = sources.to_pandas()
+#then i converted it into a numpy array that i saved with savetxt
+samsdouta=array(samsdout)
+savetxt('samsdout.txt',samsdouta,fmt='%f')
