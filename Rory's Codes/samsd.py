@@ -18,7 +18,7 @@ daofind = DAOStarFinder(fwhm=10., threshold=3.*std)
 sources = daofind(image-bkrd)
 #print the results of our daofind
 print(sources)
-#to get the table into a savabe format, I converted it into a pandas format
+#to get the table into a savable format, I converted it into a pandas format
 samsdout = sources.to_pandas()
 #then i converted it into a numpy array that i saved with savetxt
 samsdouta=array(samsdout)
