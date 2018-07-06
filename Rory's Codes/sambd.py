@@ -34,4 +34,6 @@ mask = make_source_mask(data, snr=2, npixels=5, dilate_size=11)
 #I set up this masking array in the previous line with make_source_mask and it is conveninetly named mask.
 mean, median, std = sigma_clipped_stats(data, mask=mask)
 #print results
-print(mean, median, std)
+print (mean, median, std)
+#put the results into a text file to use in a future program
+savetxt('sambdout.txt', ["%f  %f  %f" % (mean, median, std)], fmt='%s')
