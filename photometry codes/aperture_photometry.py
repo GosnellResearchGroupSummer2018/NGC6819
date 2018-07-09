@@ -13,13 +13,28 @@ hdu = fits.open("/Users/computationalphysics/Desktop/ib2o01020_drz.fits")[1]
 data = hdu.data[3000:3200, 3000:3200] #This image is 5644x5895 piels, and I want to restrict my search to the very small section in the center because the edges of these images are noisy and this code is optimized to work on smaller images.
 
 from photutils import DAOStarFinder
-from astropy.visualization import LogStretch
-from astropy.visualization.mpl_normalize import ImageNormalize
+from photutils import make_source_mask
+from astropy.stats import sigma_clipped_stats
+
+mask = make_source_mask(data, snr=2, npixels=5, dilate_size=10, sigclip_iters=None)
+mean, median, std = sigma_clipped_stats(data, sigma=3.0, mask=mask, iters=None)
+daofind = DAOStarFinder(fwhm=3.0, threshold=3*std)
+sources = daofind(data - median)
+positions = (sources['xcentroid'],sources['ycentroid'])
 
 from photutils import CircularAperture
+from photutils import CircularAnnulus
+from photutils import aperture_photometry
+
 apertures = CircularAperture(positions, r=3.)
-
-
-daofind = DAOStarFinder(fwhm=3.0, threshold=3*std)
-sources = daofind()
-print(sources)
+annuli = CircularAnnulus(positions, r_in=6., r_out=8.)
+apers = [apertures, annuli]
+phot_table = aperture_photometry(data, apers)
+bkg_mean = phot_table['aperture_sum_1'] / annuli.area()
+bkg_sum = bkg_mean * apertures.area()
+final_sum = phot_table['aperture_sum_0'] - bkg_sum
+phot_table['residual_aperture_sum'] = final_sum
+phot_table = array(phot_table)
+np.set_printoptions(threshold=np.nan)
+log = open("/Users/computationalphysics/Desktop/phot_table.txt", "w")
+print(phot_table, file = log)
