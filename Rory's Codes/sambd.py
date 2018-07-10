@@ -14,7 +14,12 @@ from photutils import datasets
 #i am now using the make_100gaussians_image from photutils.datasets
 #that they utilize in the readthedocs tutorial.
 #the data that wouldn't work: #data = "/Volumes/64FLASH/astro/MAST_2018-06-25T2014/HST/ib2o03020/ib2o03020_drc.fits"
-data = datasets.make_100gaussians_image()
+#next three lines from Thom's photometry program: solves fits read issues
+from astropy.io import fits
+hdu = fits.open("/Volumes/64FLASH/astro/MAST_2018-06-25T2014/HST/ib2o03020/ib2o03020_drc.fits")[1]
+data = hdu.data[3000:3200, 3000:3200] #This image is 5644x5895 piels, and I want to restrict my search to the very small section in the center because the edges of these images are noisy and this code is optimized to work on smaller images.
+save("data.npy", data)
+#data = datasets.load_star_image()
 #define the mask function
 #the mask function defines which points will not be considered as part of the background.
 #The idea here is that by removing all the sources the background can be understood to be everything else

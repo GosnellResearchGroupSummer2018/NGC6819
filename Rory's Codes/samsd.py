@@ -10,13 +10,14 @@ from astropy.stats import mad_std
 from pandas import *
 from astropy.io import ascii
 #import data from background detection
-image = datasets.make_100gaussians_image()
+#image = datasets.load_star_image()
+data = load("data.npy")
 bkrd,std = loadtxt('sambdout.txt',usecols= (1,2),unpack=True)
 #DAOStarFinder is a routine in photutils
 #fwhm sets the
 daofind = DAOStarFinder(fwhm=10., threshold=3.*std)
 # perform DAOStarFinder on the data with the median background subtracted
-sources = daofind(image-bkrd)
+sources = daofind(data-bkrd)
 #print the results of our daofind
 #print(sources)
 #NEW way to save data, fewer steps, works with mixins, use ascii.write
@@ -28,7 +29,7 @@ from photutils import CircularAperture
 positions = (sources['xcentroid'], sources['ycentroid'])
 apertures = CircularAperture(positions, r=4)
 norm = ImageNormalize(stretch=SqrtStretch())
-imshow(image-bkrd, cmap='Greys', origin='lower', norm=norm)
+imshow(data-bkrd, cmap='Greys', origin='lower', norm=norm)
 apertures.plot(color='blue', lw=1.5, alpha=0.5)
 #save the firgure rather than displaying it
 savefig('sourcefig.png')
