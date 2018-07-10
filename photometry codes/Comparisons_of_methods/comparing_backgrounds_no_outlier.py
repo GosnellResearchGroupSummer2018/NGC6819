@@ -47,6 +47,8 @@ y = np.linspace(-1,12,50)
 
 plt.plot(final_sum_nbkg, final_sum_ybkg, 'ro')
 plt.plot(x,y, 'b-')
+plt.xlim([-.5, 1.5])
+plt.ylim([-.5, 1.5])
 plt.xlabel('Flux rates w/ background level subtracted before source detection (counts/s)')
 plt.ylabel('Flux rates w/o background level subtracted before source detection (counts/s)')
 plt.title('Comparing flux rates calculated w/ different source detection methods')
