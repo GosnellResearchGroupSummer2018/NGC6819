@@ -11,7 +11,6 @@ from astropy.io import fits
 #Lines 14-15 tell the program where to find data (which, for this program to work, should be on the desktop) and defines that data as "data".
 hdu = fits.open("/Users/computationalphysics/Desktop/ib2o01020_drz.fits")[1]
 data = hdu.data[3000:3200, 3000:3200] #This image is 5644x5895 piels, and I want to restrict my search to the very small section in the center because the edges of these images are noisy and this code is optimized to work on smaller images.
-
 from photutils import DAOStarFinder
 from photutils import make_source_mask
 from astropy.stats import sigma_clipped_stats
@@ -34,7 +33,16 @@ bkg_mean = phot_table['aperture_sum_1'] / annuli.area()
 bkg_sum = bkg_mean * apertures.area()
 final_sum = phot_table['aperture_sum_0'] - bkg_sum
 phot_table['residual_aperture_sum'] = final_sum
-final_sum = np.asarray(final_sum)
+phot_table = np.array(phot_table)
 np.set_printoptions(threshold=np.nan)
 log = open("/Users/computationalphysics/Desktop/phot_table.txt", "w")
-print(final_sum, file = log)
+print(phot_table, file = log)
+
+from astropy.visualization import LogStretch
+from astropy.visualization.mpl_normalize import ImageNormalize
+
+norm = ImageNormalize(stretch = LogStretch())
+plt.imshow(data, cmap='Greys',origin='lower',norm=norm)
+apertures.plot(color='blue', lw=1.5, alpha=.5)
+#annuli.plot(color='blue', lw=1.5, alpha=.5) #uncomment this line to plot the annuli
+plt.show()
