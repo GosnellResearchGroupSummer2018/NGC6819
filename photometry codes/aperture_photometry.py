@@ -19,7 +19,7 @@ from astropy.stats import sigma_clipped_stats
 mask = make_source_mask(data, snr=2, npixels=5, dilate_size=10, sigclip_iters=None)
 mean, median, std = sigma_clipped_stats(data, sigma=3.0, mask=mask, iters=None)
 daofind = DAOStarFinder(fwhm=3.0, threshold=3*std)
-sources = daofind(data - median)
+sources = daofind(data)
 positions = (sources['xcentroid'],sources['ycentroid'])
 
 from photutils import CircularAperture
@@ -34,7 +34,7 @@ bkg_mean = phot_table['aperture_sum_1'] / annuli.area()
 bkg_sum = bkg_mean * apertures.area()
 final_sum = phot_table['aperture_sum_0'] - bkg_sum
 phot_table['residual_aperture_sum'] = final_sum
-phot_table = array(phot_table)
+final_sum = np.asarray(final_sum)
 np.set_printoptions(threshold=np.nan)
 log = open("/Users/computationalphysics/Desktop/phot_table.txt", "w")
-print(phot_table, file = log)
+print(final_sum, file = log)
