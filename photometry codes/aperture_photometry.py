@@ -21,7 +21,7 @@ from astropy.stats import sigma_clipped_stats
 mask = make_source_mask(data, snr=2, npixels=5, dilate_size=10, sigclip_iters=None)
 mean, median, std = sigma_clipped_stats(data, sigma=3.0, mask=mask, iters=None)
 
-#Lines 25-27 find sources in the image using a higher signal:noise ratio (3:1) and more precise noise estimate. They then define the source's positions.
+#Lines 25-27 find sources in the image using a higher signal:noise ratio (3:1) and more precise noise estimate. They then define the sources' positions.
 daofind = DAOStarFinder(fwhm=3.0, threshold=3*std)
 sources = daofind(data)
 positions = (sources['xcentroid'],sources['ycentroid'])
@@ -40,10 +40,10 @@ apers = [apertures, annuli]
 data[data < 0] = 0
 error = np.sqrt(data)
 
-#Line 44 calculates the total number of counts in both the center circles and annuli around each source and propogates the uncertainty from each pixel over the entire source
+#Line 44 calculates the total number of counts/s in both the center circles and annuli around each source and propogates the uncertainty from each pixel over the entire source (note: each pixel in a drizzled image like this one has information about counts/s, not counts. You can use the observation time as an "effective gain" and multiply each data point by this gain if you desire total counts)
 phot_table = aperture_photometry(data, apers, error=error)
 
-#Lines 47-50 do the math necessary for aperture photometry. Using the annulus, and average background flux level is determined (counts in annulus divided by area of annulus), which is then multiplied by the area inside the center circle to find the total number of counts due to the background that are inside the circle. That value is subtracted from the measured flux inside the circle and you have an accurate estimate of the flux from the star itself. Line 48 adds a new column to phot_table with this information.
+#Lines 47-50 do the math necessary for aperture photometry. Using the annulus, and average background flux rate level is determined (counts/s in annulus divided by area of annulus), which is then multiplied by the area inside the center circle to find the total counts/s due to the background that are inside the circle. That value is subtracted from the measured flux rate inside the circle and you have an accurate estimate of the flux rate of the star itself. Line 48 adds a new column to phot_table with this information.
 bkg_mean = phot_table['aperture_sum_1'] / annuli.area()
 bkg_sum = bkg_mean * apertures.area()
 final_sum = phot_table['aperture_sum_0'] - bkg_sum
@@ -55,7 +55,7 @@ err_sum = err_mean * apertures.area()
 final_err = phot_table['aperture_sum_err_0'] - err_sum
 phot_table['residual_err_sum'] = final_err
 
-#Lines 59-62 save an untruncated text file called 'phot_table.txt' that has columns "id, xcenter pix, ycenter pix, aperture_sum_0 (counts in the inner circle), aperture_sum_1 (counts in the annulus), aperture_sum_err_0 (total uncertainty from annulus), aperture_sum_err_1 (total uncertainty in center circle), residual_aperture_sum (counts due to sources inside the circle), and residual_sum_err (total uncertainty in source flux rate)."
+#Lines 59-62 save an untruncated text file called 'phot_table.txt' that has columns "id, xcenter pix, ycenter pix, aperture_sum_0 (counts/s in the inner circle), aperture_sum_1 (counts/s in the annulus), aperture_sum_err_0 (total uncertainty from annulus), aperture_sum_err_1 (total uncertainty in center circle), residual_aperture_sum (counts/s due to sources inside the circle), and residual_sum_err (total uncertainty in source flux rate)"
 phot_table = np.array(phot_table)
 np.set_printoptions(threshold=np.nan)
 log = open("/Users/computationalphysics/Desktop/phot_table.txt", "w")
@@ -73,7 +73,7 @@ plt.imshow(data, cmap='Greys',origin='lower',norm=norm)
 apertures.plot(color='blue', lw=1.5, alpha=.5)
 #annuli.plot(color='blue', lw=1.5, alpha=.5) #uncomment this line to plot the annuli
 
-#Lines 77-82 create a plot that shows the flux rates and implied uncertainties for each source. Sources are numbered 1-147 
+#Lines 77-82 create a plot that shows the flux rates and implied uncertainties for each source. Sources are numbered 1-147
 plt.subplot(212)
 plt.errorbar(phot_table['id'], phot_table['residual_aperture_sum'], yerr=phot_table['residual_err_sum'], fmt='o', markersize=2.5, ecolor='r')
 plt.xlabel('Source ID')
