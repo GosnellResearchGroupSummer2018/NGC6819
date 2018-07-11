@@ -19,5 +19,6 @@ apertures = CircularAperture(pos, r=3.)
 data = load("data.npy")
 #perform aperture photometry on the data in the given apertures
 phot_table = aperture_photometry(data, apertures)
+print(phot_table)
 #save the resulting table to an output text file
 ascii.write(phot_table, 'samapout.txt',overwrite=True)
