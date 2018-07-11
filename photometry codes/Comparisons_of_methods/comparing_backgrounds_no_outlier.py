@@ -29,7 +29,8 @@ from photutils import aperture_photometry
 apertures_nbkg = CircularAperture(positions_nbkg, r=3.)
 annuli_nbkg = CircularAnnulus(positions_nbkg, r_in=6., r_out=8.)
 apers_nbkg = [apertures_nbkg, annuli_nbkg]
-phot_table_nbkg = aperture_photometry(data, apers_nbkg)
+err_nbkg =
+phot_table_nbkg = aperture_photometry(data, apers_nbkg, error=err_nbkg)
 bkg_mean_nbkg = phot_table_nbkg['aperture_sum_1'] / annuli_nbkg.area()
 bkg_sum_nbkg = bkg_mean_nbkg * apertures_nbkg.area()
 final_sum_nbkg = phot_table_nbkg['aperture_sum_0'] - bkg_sum_nbkg
@@ -37,7 +38,8 @@ final_sum_nbkg = phot_table_nbkg['aperture_sum_0'] - bkg_sum_nbkg
 apertures_ybkg = CircularAperture(positions_ybkg, r=3.)
 annuli_ybkg = CircularAnnulus(positions_ybkg, r_in=6., r_out=8.)
 apers_ybkg = [apertures_ybkg, annuli_ybkg]
-phot_table_ybkg = aperture_photometry(data, apers_ybkg)
+err_ybkg =
+phot_table_ybkg = aperture_photometry(data, apers_ybkg, error=err_ybkg)
 bkg_mean_ybkg = phot_table_ybkg['aperture_sum_1'] / annuli_ybkg.area()
 bkg_sum_ybkg = bkg_mean_ybkg * apertures_ybkg.area()
 final_sum_ybkg = phot_table_ybkg['aperture_sum_0'] - bkg_sum_ybkg
@@ -52,4 +54,5 @@ plt.ylim([-.5, 1.5])
 plt.xlabel('Flux rates w/ background level subtracted before source detection (counts/s)')
 plt.ylabel('Flux rates w/o background level subtracted before source detection (counts/s)')
 plt.title('Comparing flux rates calculated w/ different source detection methods')
+plt.errorbar(final_sum_nbkg, final_sum_ybkg, xerr=phot_table_nbkg['aperture_sum_err'], yerr=phot_table_ybkg['aperture_sum_err'])
 plt.show()
