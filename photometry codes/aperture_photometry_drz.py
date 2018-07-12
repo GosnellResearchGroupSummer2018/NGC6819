@@ -10,9 +10,7 @@ from astropy.io import fits
 
 #Lines 12-13 tell the program where to find data (which, for this program to work, should be on the desktop) and define that data as "data."
 hdu = fits.open("/Users/computationalphysics/Desktop/ib2o01020_drz.fits")[1]
-rates = hdu.data[3000:3200, 3000:3200] #This image is 5644x5895 pixels, and I want to restrict my search to the very small section in the center because the edges of these images are noisy and this code is optimized to work on smaller images.
-gain_eff = 7058
-data = rates * gain_eff
+data = hdu.data[3000:3200, 3000:3200] #This image is 5644x5895 pixels, and I want to restrict my search to the very small section in the center because the edges of these images are noisy and this code is optimized to work on smaller images.
 
 #Lines 16-18 bring in all the command necessary to detect sources in an image with high precision (using source masking)
 from photutils import DAOStarFinder
@@ -32,6 +30,7 @@ positions = (sources['xcentroid'],sources['ycentroid'])
 from photutils import CircularAperture
 from photutils import CircularAnnulus
 from photutils import aperture_photometry
+from photutils.utils import calc_total_error
 
 #Lines 35-37 create aperture objects (a circle around each source with a concentric annulus around each circle) and group them in a 2x1 array called apers.
 apertures = CircularAperture(positions, r=3.)
@@ -39,8 +38,9 @@ annuli = CircularAnnulus(positions, r_in=6., r_out=8.)
 apers = [apertures, annuli]
 
 #Lines 40-41 replace all negatives in 'data' with , estimate the uncertainty in the number of counts at each pixel, and define that uncertainty as 'error'
-data[data < 0] = 0
-error = np.sqrt(data)
+bkg_err = np.zeros(shape=(200,200))
+gain_eff = 7058 #seconds
+error = calc_total_error(data, bkg_err, gain_eff)
 
 #Line 44 calculates the total number of counts/s in both the center circles and annuli around each source and propogates the uncertainty from each pixel over the entire source (note: each pixel in a drizzled image like this one has information about counts/s, not counts. You can use the observation time as an "effective gain" and multiply each data point by this gain if you desire total counts)
 phot_table = aperture_photometry(data, apers, error=error)
@@ -80,5 +80,6 @@ plt.subplot(212)
 plt.errorbar(phot_table['id'], phot_table['residual_aperture_sum'], yerr=phot_table['residual_err_sum'], fmt='o', markersize=2.5, ecolor='r', barsabove=True)
 plt.xlabel('Source ID')
 plt.ylabel('Flux Rate (counts/s)')
+#plt.ylim([-.5, 2.])
 plt.title('Flux Rates of Above Sources')
 plt.show()
