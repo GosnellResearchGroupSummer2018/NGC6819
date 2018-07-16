@@ -10,7 +10,7 @@ from astropy.io import fits
 
 #Lines 12-13 tell the program where to find data (which, for this program to work, should be on the desktop) and define that data as "data."
 hdu = fits.open("/Users/computationalphysics/Desktop/ib2o01020_drz.fits")[1]
-data = hdu.data[3000:3200, 3000:3200] #This image is 5644x5895 pixels, and I want to restrict my search to the very small section in the center because the edges of these images are noisy and this code is optimized to work on smaller images.
+data = hdu.data[3000:3500, 3000:3500] #This image is 5644x5895 pixels, and I want to restrict my search to the very small section in the center because the edges of these images are noisy and this code is optimized to work on smaller images.
 
 #Lines 16-18 bring in all the command necessary to detect sources in an image with high precision (using source masking)
 from photutils import DAOStarFinder
@@ -22,7 +22,7 @@ mask = make_source_mask(data, snr=2, npixels=5, dilate_size=10, sigclip_iters=No
 mean, median, std = sigma_clipped_stats(data, sigma=3.0, mask=mask, iters=None)
 
 #Lines 25-27 find sources in the image using a higher signal:noise ratio (3:1) and more precise noise estimate. They then define the sources' positions.
-daofind = DAOStarFinder(fwhm=3.0, threshold=3*std)
+daofind = DAOStarFinder(fwhm=4.0, threshold=200*std)
 sources = daofind(data)
 positions = (sources['xcentroid'],sources['ycentroid'])
 
@@ -33,12 +33,12 @@ from photutils import aperture_photometry
 from photutils.utils import calc_total_error
 
 #Lines 35-37 create aperture objects (a circle around each source with a concentric annulus around each circle) and group them in a 2x1 array called apers.
-apertures = CircularAperture(positions, r=3.)
+apertures = CircularAperture(positions, r=5.)
 annuli = CircularAnnulus(positions, r_in=6., r_out=8.)
 apers = [apertures, annuli]
 
 #Lines 40-41 replace all negatives in 'data' with , estimate the uncertainty in the number of counts at each pixel, and define that uncertainty as 'error'
-bkg_err = np.zeros(shape=(200,200))
+bkg_err = np.zeros(shape=(500,500))
 gain_eff = 7058 #seconds
 error = calc_total_error(data, bkg_err, gain_eff)
 
@@ -58,6 +58,8 @@ final_err = phot_table['aperture_sum_err_0'] - err_sum
 phot_table['residual_err_sum'] = final_err
 
 #Lines 59-62 save an untruncated text file called 'phot_table.txt' that has columns "id, xcenter pix, ycenter pix, aperture_sum_0 (counts/s in the inner circle), aperture_sum_1 (counts/s in the annulus), aperture_sum_err_0 (total uncertainty from annulus), aperture_sum_err_1 (total uncertainty in center circle), residual_aperture_sum (counts/s due to sources inside the circle), and residual_sum_err (total uncertainty in source flux rate)"
+flux = phot_table['residual_aperture_sum']
+flux[flux < 0] = 0
 phot_table = np.array(phot_table)
 np.set_printoptions(threshold=np.nan)
 log = open("/Users/computationalphysics/Desktop/phot_table.txt", "w")
@@ -68,18 +70,40 @@ from astropy.visualization import LogStretch
 from astropy.visualization.mpl_normalize import ImageNormalize
 
 #Lines 69-73 show all the sources in an image by circling them in blue. Line 74 can be uncommented to show the annuli as well
-plt.subplot(211)
+"""plt.subplot(211)
 plt.title('Sources in RA = {-19:41:06.6573 U -19:41:05.6944} Dec = {40:10:46.003 U 40:10:44.051}')
 norm = ImageNormalize(stretch = LogStretch())
-plt.imshow(data, cmap='Greys',origin='lower',norm=norm)
-apertures.plot(color='blue', lw=1.5, alpha=.5)
+plt.imshow(data, cmap='coolwarm',origin='lower',norm=norm)"""
+#apertures.plot(color='blue', lw=1.5, alpha=.5)
 #annuli.plot(color='blue', lw=1.5, alpha=.5) #uncomment this line to plot the annuli
-
+fig, ax = plt.subplots()
 #Lines 77-82 create a plot that shows the flux rates and implied uncertainties for each source. Sources are numbered 1-147
 plt.subplot(212)
-plt.errorbar(phot_table['id'], phot_table['residual_aperture_sum'], yerr=phot_table['residual_err_sum'], fmt='o', markersize=2.5, ecolor='r', barsabove=True)
+plt.errorbar(phot_table['id'], flux, yerr=phot_table['residual_err_sum'], fmt='o', markersize=2.5, ecolor='r', barsabove=True)
 plt.xlabel('Source ID')
-plt.ylabel('Flux Rate (counts/s)')
-#plt.ylim([-.5, 2.])
-plt.title('Flux Rates of Above Sources')
+ticks = np.arange(0,21,.1)
+ax.set_xticks(ticks)
+plt.ylabel('Flux (counts)')
+#ax.text(2.5, 20000, 'Points 2, 3, 5, 6, 9, 10, and 11 are invalid')
+ax.text(20000, 2.5, 'Points 2, 3, 5, 6, 9, 10, and 11 are invalid',
+        verticalalignment='bottom', horizontalalignment='right',
+        transform=ax.transAxes,
+        fontsize=12)
+plt.title('Fluxes of Above Sources')
+X = len(phot_table['id'])
+xspot = phot_table['id']
+yspot = flux
+for i in range (0,X):
+    plt.annotate("%d" % (i+1), (xspot[i],yspot[i]))
+
+plt.subplot(211)
+norm = ImageNormalize(stretch = LogStretch())
+plt.imshow(data, cmap='coolwarm',origin='lower',norm=norm)
+plt.title('Sources in RA = {-19:41:06.6573 U -19:41:05.6944} Dec = {40:10:46.003 U 40:10:44.051}')
+apertures.plot(color='yellow', lw=1.5, alpha=.5)
+N = len(sources['xcentroid'])
+xpos = sources['xcentroid']
+ypos = sources['ycentroid']
+for i in range (0,N):
+    plt.annotate("%d" % (i+1), (xpos[i],ypos[i]))
 plt.show()
