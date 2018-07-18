@@ -67,14 +67,16 @@ print(phot_table, file = log)
 from astropy.visualization import LogStretch
 from astropy.visualization.mpl_normalize import ImageNormalize
 
-plt.subplot(211)
+fig, ax = plt.subplots()
+
+"""plt.subplot(211)
 plt.title('RA = {-19:41:15.0244 U -19:41:155.6276}, Dec = {40:12:39.279 U 40:12:23.988}')
 norm = ImageNormalize(stretch = LogStretch())
-plt.imshow(data, cmap='cool',origin='lower',norm=norm, vmax=12000)
+plt.imshow(data, cmap='cool',origin='lower',norm=norm, vmax=12000)"""
 
 #Lines 69-73 show all the sources in an image by circling them in blue. Line 74 can be uncommented to show the annuli as well
-plt.subplot(212)
-plt.title('Sources in RA = {-19:41:15.34 U -19:41:13.74}, Dec = {40:12:26.23 U 40:12:29.34}')
+plt.subplot(211)
+plt.title('Sources in RA = {-19:41:15.0244 U -19:41:155.6276}, Dec = {40:12:39.279 U 40:12:23.988}')
 norm = ImageNormalize(stretch = LogStretch())
 plt.imshow(data, cmap='cool',origin='lower',norm=norm, vmax=12000)
 apertures.plot(color='blue', lw=1.5, alpha=.5)
@@ -86,9 +88,15 @@ for i in range (0,N):
 #annuli.plot(color='blue', lw=1.5, alpha=.5) #uncomment this line to plot the annuli
 
 #Lines 77-82 create a plot that shows the flux rates and implied uncertainties for each source. Sources are numbered 1-147
-"""plt.subplot(212)
+plt.subplot(212)
 plt.errorbar(phot_table['id'], phot_table['residual_aperture_sum'], yerr=phot_table['residual_err_sum'], fmt='o', markersize=2.5, ecolor='r', barsabove=True)
+plt.title('Fluxes of Above Sources')
 plt.xlabel('Source ID')
 plt.ylabel('Fluxes (counts)')
-plt.title('Fluxes of Above Sources')"""
+ticks = np.arange(0,21,1)
+X = len(phot_table['id'])
+xspot = phot_table['id']
+yspot = phot_table['residual_aperture_sum']
+for i in range (0,X):
+    plt.annotate("%d" % (i+1), (xspot[i],yspot[i]))
 plt.show()
