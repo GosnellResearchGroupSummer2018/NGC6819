@@ -22,7 +22,7 @@ mask = make_source_mask(data, snr=2, npixels=5, dilate_size=10, sigclip_iters=No
 mean, median, std = sigma_clipped_stats(data, sigma=3.0, mask=mask, iters=None)
 
 #Lines 25-27 find sources in the image using a higher signal:noise ratio (3:1) and more precise noise estimate. They then define the sources' positions.
-daofind = DAOStarFinder(fwhm=3.0, threshold=5*std)
+daofind = DAOStarFinder(fwhm=4.3, threshold=7*std)
 sources = daofind(data)
 positions = (sources['xcentroid'],sources['ycentroid'])
 
@@ -68,7 +68,7 @@ from astropy.visualization import LogStretch
 from astropy.visualization.mpl_normalize import ImageNormalize
 
 plt.subplot(211)
-plt.title('RA = {-19:41:15.34 U -19:41:13.74}, Dec = {40:12:26.23 U 40:12:29.34}')
+plt.title('RA = {-19:41:15.0244 U -19:41:155.6276}, Dec = {40:12:39.279 U 40:12:23.988}')
 norm = ImageNormalize(stretch = LogStretch())
 plt.imshow(data, cmap='cool',origin='lower',norm=norm, vmax=12000)
 
