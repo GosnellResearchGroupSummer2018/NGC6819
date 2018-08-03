@@ -1,5 +1,0 @@
-import imexam
-import matplotlib
-!ds9 -title frame
-imexam.list_active_ds9()
-window=imexam.connect(frame)

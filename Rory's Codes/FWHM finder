@@ -1,6 +1,0 @@
-import imexam
-%matplotlib
-name = input ('\nEnter Planet Name:')
-ds9 -title fwhmfinder
-imexam.list_active_ds9()
-window=imexam.connect('fwhmfinder')
