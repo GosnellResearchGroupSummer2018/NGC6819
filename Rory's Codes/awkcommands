@@ -1,0 +1,17 @@
+1)create a new text file called goodstars.txt that contains the rows from ngc6819_wfc3_grid4.phot whose 11th column has a value of 1.
+awk '$11 + 0 == 1' ngc6819_wfc3_grid4.phot > goodstars.txt
+2)create a new text file called badstars.txt that contains the rows from ngc6819_wfc3_grid4.phot whose 11th column has a value not equal to 1.
+awk '$11 + 0 != 1' ngc6819_wfc3_grid4.phot > badstars.txt
+3)same as 1) but when the 7th column equals zero
+awk '$7 + 0 == 0' ngc6819_wfc3_grid4.phot > zerosharpstars.txt
+4)create a new text file called sharpcols.txt that contains the 7th and 21st columns from ngc6819_wfc3_grid4.phot
+awk '{print $7 $21}' ngc6819_wfc3_grid4.phot > sharpcols.txt
+5)same as 4) but with a bunch of columns not just 2 of them also with commas between values which then translate to spaces in the text file
+awk '{print $24, $37, $50, $63, $76, $89, $102, $115, $128, $141, $154}' ngc6819_wfc3_grid4.phot > qualflags.txt
+6)create a new text file called zerosharpstars.txt that contains the rows from ngc6819_wfc3_grid4.phot whose 7th column has a value between -.001 and .001.
+awk '$7 >= -.001 && $7 <= .001' ngc6819_wfc3_grid4.phot > zerosharpstars.txt
+
+Other examples of the same stuff:
+awk '$6 + 0 >= 5' zerosharpstars.txt > zerosharpsnr5plustars.txt
+awk '$24 + 0 == 0' zerosharpsnr5plustars.txt > zerosharpsnr5plusnoflagstars.txt
+awk '{print $3,$4}' zerosharpsnr5plustars.txt > positions.txt
