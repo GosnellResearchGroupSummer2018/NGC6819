@@ -15,3 +15,9 @@ Other examples of the same stuff:
 awk '$6 + 0 >= 5' zerosharpstars.txt > zerosharpsnr5plustars.txt
 awk '$24 + 0 == 0' zerosharpsnr5plustars.txt > zerosharpsnr5plusnoflagstars.txt
 awk '{print $3,$4}' zerosharpsnr5plustars.txt > positions.txt
+
+awk '{print $8}' ngc6819_wfc3_grid4.phot > roundcol.txt
+
+awk '$7 >= -.3 && $7 <= .3 && $24 + 0 == 0 && $6 + 0 >= 5 && $8 <= .5' ngc6819_wfc3_grid4.phot > gstars.txt
+awk '{print $8}' gstars.txt > roundgs.txt
+awk '{print $3,$4}' gstars.txt > positions.txt
