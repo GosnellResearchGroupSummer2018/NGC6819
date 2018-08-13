@@ -18,6 +18,9 @@ awk '{print $3,$4}' zerosharpsnr5plustars.txt > positions.txt
 
 awk '{print $8}' ngc6819_wfc3_grid4.phot > roundcol.txt
 
-awk '$7 >= -.3 && $7 <= .3 && $24 + 0 == 0 && $6 + 0 >= 5 && $8 <= .5' ngc6819_wfc3_grid4.phot > gstars.txt
+awk '$7 >= -.3 && $7 <= .3 && $24 + 0 == 1 && $6 + 0 >= 5 && $8 <= .5' ngc6819_wfc3_grid4.phot > gstars.txt
 awk '{print $8}' gstars.txt > roundgs.txt
 awk '{print $3,$4}' gstars.txt > positions.txt
+awk '$7 >= -.3 && $7 <= .3 && $24 + 0 == 0 && $6 + 0 >= 100 && $8 <= .5' ngc6819_wfc3_grid4.phot > godstars.txt
+awk '{print $3,$4}' godstars.txt > positions.txt
+awk '$7 >= -.3 && $7 <= .3 && $24 + 0 <= 1 && $6 + 0 >= 100 && $8 <= .5 && $10 + 0 <= .5' ngc6819_wfc3_grid4.phot > godstars.txt
