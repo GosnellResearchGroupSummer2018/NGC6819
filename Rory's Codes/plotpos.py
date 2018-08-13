@@ -9,6 +9,7 @@ from astropy.io import fits
 
 #import data
 pos = loadtxt('/Volumes/64FLASH/dolphotresults/ibop04/positions.txt')
+clf()
 hdu = fits.open("/Volumes/64FLASH/astro/photometry/NGC6819/raw/raw+/ibop04/ibop04020_drc.fits")[1]
 data = hdu.data
 
