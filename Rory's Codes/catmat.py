@@ -16,3 +16,12 @@ dec2 = ib2o01wcs[:,1]
 c = SkyCoord(ra=ra1*u.degree, dec=dec1*u.degree)
 catalog = SkyCoord(ra=ra2*u.degree, dec=dec2*u.degree)
 idx, d2d, d3d = c.match_to_catalog_sky(catalog)
+#create an array of the c idx.
+N=len(idx)
+cnum=arange(0,N,1)
+#make an array of cidx it's idx match and the distance between them
+catdis=column_stack((cnum,idx,d2d))
+#Keep only matches with a distance less than 3.6 mas
+catdisr=catdis[where(catdis[:,2] <= .000001)]
+#save new array to a text file
+savetxt("catdisibop04ib2o01.txt", catdisr, fmt='%f')
