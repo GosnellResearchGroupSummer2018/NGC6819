@@ -32,3 +32,8 @@ awk '$24 + 0 == 0 && $6 + 0 >= 75 && $8 + 0 <= .1 && $10 + 0 <= .2' ngc6819_wfc3
 awk '$24 + 0 == 0 && $6 + 0 >= 75 && $8 + 0 <= .1 && $10 + 0 <= .5' ngc6819_wfc3_grid4.phot > godstars.txt
 awk '$24 + 0 == 0 && $6 + 0 >= 75 && $8 + 0 <= .5 && $10 + 0 <= .5' ngc6819_wfc3_grid4.phot > godstars.txt
 awk '{print $14,$15,$16,$17}' godstars.txt > mags.txt
+awk '{print $14,$15,$16,$17}' goodstars.txt > mags.txt
+awk '$16 + O != 99.999' godstars.txt > goodstars.txt
+awk '{print $3,$4}' goodstars.txt > positions.txt
+awk '{print $12,$14,$25,$38,$51,$64,$77,$90,$103,$116,$129,$142}' godstars.txt > countcols.txt
+awk '{print $3,$4,$16}' goodstars.txt > CMD.txt

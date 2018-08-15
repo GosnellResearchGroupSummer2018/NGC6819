@@ -20,18 +20,18 @@ dec2 = ib2o01wcs[:,1]
 ra1=ara1.value
 dec2=adec2.value
 dec1=adec1.value"""
-ib2o01 = SkyCoord(ra=ra1*u.degree, dec=dec1*u.degree)
-ib2o02 = SkyCoord(ra=ra2*u.degree, dec=dec2*u.degree)
-tidx, d2d, d3d = ib2o01.match_to_catalog_sky(ib2o02)
+ib2o02 = SkyCoord(ra=ra1*u.degree, dec=dec1*u.degree)
+ib2o01 = SkyCoord(ra=ra2*u.degree, dec=dec2*u.degree)
+cidx, d2d, d3d = ib2o01.match_to_catalog_sky(ib2o02)
 #create an array with all the data
 ib2o02phot=append(ib2o02wcs,ib2o02CMD, axis=1)
 ib2o01phot=append(ib2o01wcs,ib2o01CMD, axis=1)
 #create an array of the c tidx.
-N=len(tidx)
-oidx=arange(0,N,1)
+N=len(cidx)
+idx=arange(0,N,1)
 #make an array of odx it's idx match and the distance between them
 d2dv=d2d.value
-catdis=column_stack((oidx,tidx,d2dv))
+catdis=column_stack((idx,cidx,d2dv))
 #Keep only matches with a distance less than .5 as
 catdisr=catdis[where(catdis[:,2] <= 0.000138889)]
 #save new array to a text file
@@ -40,43 +40,43 @@ CNa=arange(0,CN,1)
 catdisrn=column_stack((CNa,catdisr))
 savetxt("catdisib2o02ib2o01.txt", catdisrn, fmt='%d %d %d %f')
 #what am i doing
-o = asarray(catdisrn[:,1],dtype=int)
-t = asarray(catdisrn[:,2],dtype=int)
-n = asarray(catdisrn[:,0],dtype=int)
+imagei = asarray(catdisrn[:,1],dtype=int)
+catalogi = asarray(catdisrn[:,2],dtype=int)
+matchi = asarray(catdisrn[:,0],dtype=int)
 ib2o02mags=loadtxt('/Volumes/64FLASH/dolphotresults/ib2o02/mags.txt')
 ib2o01mags=loadtxt('/Volumes/64FLASH/dolphotresults/ib2o01/mags.txt')
-tmag=[]
-omag=[]
+catmag=[]
+immag=[]
 nmag=[]
-for i in o:
+for i in imagei:
     mag = ib2o02mags[i,2]
-    tmag.append(mag)
+    catmag.append(mag)
     delete(ib2o02phot,i, 0)
-for i in t:
+for i in catalogi:
     mag = ib2o01mags[i,2]
-    omag.append(mag)
+    immag.append(mag)
     delete(ib2o01phot,i, 0)
-for i in n:
-    mag=(tmag[i]+omag[i])/2
+for i in matchi:
+    mag=(catmag[i]+immag[i])/2
     nmag.append(mag)
 nml=len(nmag)
 nwcs=zeros((nml,2))
 zeros=zeros((nml,2))
-owcs=empty((nml,2))
-twcs=empty((nml,2))
+imwcs=empty((nml,2))
+catwcs=empty((nml,2))
 x=0
 y=0
-for i in o:
+for i in imagei:
     wcs = ib2o02wcs[i]
-    twcs[x]=wcs
+    catwcs[x]=wcs
     x=x+1
-for i in t:
+for i in catalogi:
     wcs = ib2o01wcs[i]
-    owcs[y]=wcs
+    imwcs[y]=wcs
     y=y+1
-for i in n:
-    ra=(owcs[i,0]+twcs[i,0])/2
-    dec=(owcs[i,1]+twcs[i,1])/2
+for i in matchi:
+    ra=(imwcs[i,0]+catwcs[i,0])/2
+    dec=(imwcs[i,1]+catwcs[i,1])/2
     nwcs[i]=array((ra,dec))
 nmaga=array(nmag,ndmin=2)
 anmag=transpose(nmaga)
