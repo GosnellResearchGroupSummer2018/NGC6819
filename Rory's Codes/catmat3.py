@@ -79,4 +79,4 @@ shared0102=append(share0102,anmag,axis=1)
 #add the shared values to the photometry list
 catalist3=concatenate((catalist1,catalist2,shared0102),axis=0)
 catalogpos3=array((catalist3[:,0],catalist3[:,1]))
-savetxt("catalist3.txt", catalist3, fmt='%f')
+savetxt("606catalog.txt", catalist3, fmt='%f')

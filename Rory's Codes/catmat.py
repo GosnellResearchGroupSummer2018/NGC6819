@@ -47,7 +47,7 @@ ib2o02mags=loadtxt('/Volumes/64FLASH/dolphotresults/ib2o02/mags.txt')
 ib2o01mags=loadtxt('/Volumes/64FLASH/dolphotresults/ib2o01/mags.txt')
 catmag=[]
 immag=[]
-nmag=[]
+matchmag=[]
 for i in imagei:
     mag = ib2o02mags[i,2]
     catmag.append(mag)
@@ -58,9 +58,9 @@ for i in catalogi:
     delete(ib2o01phot,i, 0)
 for i in matchi:
     mag=(catmag[i]+immag[i])/2
-    nmag.append(mag)
-nml=len(nmag)
-nwcs=zeros((nml,2))
+    matchmag.append(mag)
+nml=len(matchmag)
+matchwcs=zeros((nml,2))
 zeros=zeros((nml,2))
 imwcs=empty((nml,2))
 catwcs=empty((nml,2))
@@ -77,10 +77,10 @@ for i in catalogi:
 for i in matchi:
     ra=(imwcs[i,0]+catwcs[i,0])/2
     dec=(imwcs[i,1]+catwcs[i,1])/2
-    nwcs[i]=array((ra,dec))
-nmaga=array(nmag,ndmin=2)
+    matchwcs[i]=array((ra,dec))
+nmaga=array(matchmag,ndmin=2)
 anmag=transpose(nmaga)
-share0102=append(nwcs,zeros, axis=1)
+share0102=append(matchwcs,zeros, axis=1)
 shared0102=append(share0102,anmag,axis=1)
 #add the shared values to the photometry list
 catalist1=concatenate((ib2o01phot,ib2o02phot,shared0102),axis=0)
