@@ -26,4 +26,9 @@ awk '{print $3,$4}' godstars.txt > positions.txt
 awk '$7 >= -.3 && $7 <= .3 && $24 + 0 == 0 && $6 + 0 >= 75 && $8 <= .5' ngc6819_wfc3_grid4.phot > godstars.txt
 awk '$7 >= -.3 && $7 <= .3 && $24 + 0 <= 1 && $6 + 0 >= 50 && $8 <= .5 && $10 + 0 <= .5' ngc6819_wfc3_grid4.phot > godstars.txt
 awk '$7 >= -.3 && $7 <= .3 && $24 + 0 == 0 && $6 + 0 >= 75 && $8 <= 1 && $10 + 0 <= 1' ngc6819_wfc3_grid4.phot > godstars.txt
-awk '$7 + 0 >= -.3 && $7 + 0 <= .3 && $24 + 0 == 0 && $6 + 0 >= 75 && $8 + 0 <= .1 && $10 + 0 <= 1.5' ngc6819_wfc3_grid4.phot > godstars.txt
+awk '$7 + 0 >= -.3 && $7 + 0 <= .3 && $24 + 0 == 0 && $6 + 0 >= 75 && $8 + 0 <= .1 && $10 + 0 <= .5' ngc6819_wfc3_grid4.phot > godstars.txt
+awk '$6 + 0 >= 75' ngc6819_wfc3_grid4.phot > godstars.txt
+awk '$24 + 0 == 0 && $6 + 0 >= 75 && $8 + 0 <= .1 && $10 + 0 <= .2' ngc6819_wfc3_grid4.phot > godstars.txt
+awk '$24 + 0 == 0 && $6 + 0 >= 75 && $8 + 0 <= .1 && $10 + 0 <= .5' ngc6819_wfc3_grid4.phot > godstars.txt
+awk '$24 + 0 == 0 && $6 + 0 >= 75 && $8 + 0 <= .5 && $10 + 0 <= .5' ngc6819_wfc3_grid4.phot > godstars.txt
+awk '{print $14,$15,$16,$17}' godstars.txt > mags.txt

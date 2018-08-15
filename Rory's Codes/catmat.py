@@ -4,11 +4,11 @@ from astropy.coordinates import SkyCoord
 from astropy import units as u
 from numpy import *
 #import position wcs data
-ibop04wcs = load("ibop04wcs.npy")
+ib2o02wcs = load("ib2o02wcs.npy")
 #define first column as ra
-ra1 = ibop04wcs[:,0]
+ra1 = ib2o02wcs[:,0]
 #second column as dec
-dec1 = ibop04wcs[:,1]
+dec1 = ib2o02wcs[:,1]
 #do it with the other data
 ib2o01wcs = load("ib2o01wcs.npy")
 ra2 = ib2o01wcs[:,0]
@@ -21,7 +21,7 @@ N=len(idx)
 cnum=arange(0,N,1)
 #make an array of cidx it's idx match and the distance between them
 catdis=column_stack((cnum,idx,d2d))
-#Keep only matches with a distance less than 3.6 mas
-catdisr=catdis[where(catdis[:,2] <= .000001)]
+#Keep only matches with a distance less than .5 as
+catdisr=catdis[where(catdis[:,2] <= 0.000138889)]
 #save new array to a text file
-savetxt("catdisibop04ib2o01.txt", catdisr, fmt='%f')
+savetxt("catdisib2o02ib2o01.txt", catdisr, fmt='%f')
