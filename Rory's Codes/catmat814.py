@@ -14,6 +14,16 @@ ibop02CMD=loadtxt('/Volumes/64FLASH/dolphotresults/ibop02/CMD.txt')
 ibop03CMD=loadtxt('/Volumes/64FLASH/dolphotresults/ibop03/CMD.txt')
 ibop04CMD=loadtxt('/Volumes/64FLASH/dolphotresults/ibop04/CMD.txt')
 
+mag1=ib2o05CMD[:,2]
+mag2=ib2o06CMD[:,2]
+mag3=ib2o08CMD[:,2]
+mag4=ib2oa6CMD[:,2]
+mag5=ib2oa7CMD[:,2]
+mag6=ibop01CMD[:,2]
+mag7=ibop02CMD[:,2]
+mag8=ibop03CMD[:,2]
+mag9=ibop04CMD[:,2]
+
 #import position wcs data
 ra1,dec1=transpose(load("ib2o05wcs.npy"))
 ra2,dec2=transpose(load("ib2o06wcs.npy"))
@@ -24,8 +34,20 @@ ra6,dec6=transpose(load("ibop01wcs.npy"))
 ra7,dec7=transpose(load("ibop02wcs.npy"))
 ra8,dec8=transpose(load("ibop03wcs.npy"))
 ra9,dec9=transpose(load("ibop04wcs.npy"))
+
+ib2o05wcs=load("ib2o05wcs.npy")
+ib2o06wcs=load("ib2o06wcs.npy")
+ib2o08wcs=load("ib2o08wcs.npy")
+ib2oa6wcs=load("ib2oa6wcs.npy")
+ib2oa7wcs=load("ib2oa7wcs.npy")
+ibop01wcs=load("ibop01wcs.npy")
+ibop02wcs=load("ibop02wcs.npy")
+ibop03wcs=load("ibop03wcs.npy")
+ibop04wcs=load("ibop04wcs.npy")
 #import catalog
-catalog606=load("606catalog.txt")
+catalog606=loadtxt("606catalog.txt")
+N606=len(catalog606)
+catalog814=zeros((N606,36))
 cra = catalog606[:,0]
 #second column as dec
 cdec = catalog606[:,1]
@@ -52,15 +74,15 @@ cidx8, d2d8, d3d8 = ibop03.match_to_catalog_sky(catalog)
 cidx9, d2d9, d3d9 = ibop04.match_to_catalog_sky(catalog)
 
 #create an array with all the data
-ib2o05phot=append(ib2o05wcs,ib2o05CMD, axis=1)
-ib2o06phot=append(ib2o06wcs,ib2o06CMD, axis=1)
-ib2o08phot=append(ib2o08wcs,ib2o08CMD, axis=1)
-ib2oa6phot=append(ib2oa6wcs,ib2oa6CMD, axis=1)
-ib2oa7phot=append(ib2oa7wcs,ib2oa7CMD, axis=1)
-ibop01phot=append(ibop01wcs,ibop01CMD, axis=1)
-ibop02phot=append(ibop02wcs,ibop02CMD, axis=1)
-ibop03phot=append(ibop03wcs,ibop03CMD, axis=1)
-ibop04phot=append(ibop04wcs,ibop04CMD, axis=1)
+phot1=append(ib2o05wcs,ib2o05CMD, axis=1)
+phot2=append(ib2o06wcs,ib2o06CMD, axis=1)
+phot3=append(ib2o08wcs,ib2o08CMD, axis=1)
+phot4=append(ib2oa6wcs,ib2oa6CMD, axis=1)
+phot5=append(ib2oa7wcs,ib2oa7CMD, axis=1)
+phot6=append(ibop01wcs,ibop01CMD, axis=1)
+phot7=append(ibop02wcs,ibop02CMD, axis=1)
+phot8=append(ibop03wcs,ibop03CMD, axis=1)
+phot9=append(ibop04wcs,ibop04CMD, axis=1)
 
 #create an array of the cidx.
 N1=len(cidx1)
@@ -177,46 +199,626 @@ catalogi7 = asarray(catdisrn7[:,2],dtype=int)
 catalogi8 = asarray(catdisrn8[:,2],dtype=int)
 catalogi9 = asarray(catdisrn9[:,2],dtype=int)
 
-matchi = asarray(catdisrn[:,0],dtype=int)
-ib2o04mags=loadtxt('/Volumes/64FLASH/dolphotresults/ib2o04/mags.txt')
-ib2o03mags=loadtxt('/Volumes/64FLASH/dolphotresults/ib2o03/mags.txt')
-catmag=[]
-immag=[]
-matchmag=[]
-for i in imagei:
-    mag = ib2o04mags[i,2]
-    immag.append(mag)
-    delete(ib2o04phot,i, 0)
-for i in catalogi:
-    mag = ib2o03mags[i,2]
-    catmag.append(mag)
-    delete(ib2o03phot,i, 0)
-for i in matchi:
-    mag=(immag[i]+catmag[i])/2
-    matchmag.append(mag)
-nml=len(matchmag)
-matchwcs=zeros((nml,2))
-zeros=zeros((nml,2))
-imwcs=empty((nml,2))
-catwcs=empty((nml,2))
-x=0
-y=0
-for i in imagei:
-    wcs = ib2o04wcs[i]
-    catwcs[x]=wcs
-    x=x+1
-for i in catalogi:
-    wcs = ib2o03wcs[i]
-    imwcs[y]=wcs
-    y=y+1
-for i in matchi:
-    ra=(imwcs[i,0]+catwcs[i,0])/2
-    dec=(imwcs[i,1]+catwcs[i,1])/2
-    matchwcs[i]=array((ra,dec))
-nmaga=array(matchmag,ndmin=2)
-anmag=transpose(nmaga)
-share0102=append(matchwcs,zeros, axis=1)
-shared0102=append(share0102,anmag,axis=1)
-#add the shared values to the photometry list
-catalist2=concatenate((ib2o03phot,ib2o04phot,shared0102),axis=0)
-savetxt("catalist2.txt", catalist2, fmt='%f')"""
+i12=intersect1d(catalogi1,catalogi2)
+i13=intersect1d(catalogi1,catalogi3)
+i14=intersect1d(catalogi1,catalogi4)
+i15=intersect1d(catalogi1,catalogi5)
+i16=intersect1d(catalogi1,catalogi6)
+i17=intersect1d(catalogi1,catalogi7)
+i18=intersect1d(catalogi1,catalogi8)
+i19=intersect1d(catalogi1,catalogi9)
+i23=intersect1d(catalogi2,catalogi3)
+i24=intersect1d(catalogi2,catalogi4)
+i25=intersect1d(catalogi2,catalogi5)
+i26=intersect1d(catalogi2,catalogi6)
+i27=intersect1d(catalogi2,catalogi7)
+i28=intersect1d(catalogi2,catalogi8)
+i29=intersect1d(catalogi2,catalogi9)
+i34=intersect1d(catalogi3,catalogi4)
+i35=intersect1d(catalogi3,catalogi5)
+i36=intersect1d(catalogi3,catalogi6)
+i37=intersect1d(catalogi3,catalogi7)
+i38=intersect1d(catalogi3,catalogi8)
+i39=intersect1d(catalogi3,catalogi9)
+i45=intersect1d(catalogi4,catalogi5)
+i46=intersect1d(catalogi4,catalogi6)
+i47=intersect1d(catalogi4,catalogi7)
+i48=intersect1d(catalogi4,catalogi8)
+i49=intersect1d(catalogi4,catalogi9)
+i56=intersect1d(catalogi5,catalogi6)
+i57=intersect1d(catalogi5,catalogi7)
+i58=intersect1d(catalogi5,catalogi8)
+i59=intersect1d(catalogi5,catalogi9)
+i67=intersect1d(catalogi6,catalogi7)
+i68=intersect1d(catalogi6,catalogi8)
+i69=intersect1d(catalogi6,catalogi9)
+i78=intersect1d(catalogi7,catalogi8)
+i79=intersect1d(catalogi7,catalogi9)
+i89=intersect1d(catalogi8,catalogi9)
+
+immag1=[]
+immag2=[]
+immag3=[]
+immag4=[]
+immag5=[]
+immag6=[]
+immag7=[]
+immag8=[]
+immag9=[]
+#for each set of intersections, find the image counterpart for the duplicated
+for i in i12:
+    x=where(catalogi1==i)
+    x2=where(catalogi2==i)
+    im=imagei1[x]
+    im2=imagei2[x2]
+    mag=mag1[im]
+    magt=mag2[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot1,im, 0)
+    delete(phot2,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i13:
+    x=where(catalogi1==i)
+    x2=where(catalogi3==i)
+    im=imagei1[x]
+    im2=imagei3[x2]
+    mag=mag1[im]
+    magt=mag3[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot1,im, 0)
+    delete(phot3,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i14:
+    x=where(catalogi1==i)
+    x2=where(catalogi4==i)
+    im=imagei1[x]
+    im2=imagei4[x2]
+    mag=mag1[im]
+    magt=mag4[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot1,im, 0)
+    delete(phot4,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i15:
+    x=where(catalogi1==i)
+    x2=where(catalogi5==i)
+    im=imagei1[x]
+    im2=imagei5[x2]
+    mag=mag1[im]
+    magt=mag5[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot1,im, 0)
+    delete(phot5,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i16:
+    x=where(catalogi1==i)
+    x2=where(catalogi6==i)
+    im=imagei1[x]
+    im2=imagei6[x2]
+    mag=mag1[im]
+    magt=mag6[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot1,im, 0)
+    delete(phot6,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i17:
+    x=where(catalogi1==i)
+    x2=where(catalogi7==i)
+    im=imagei1[x]
+    im2=imagei7[x2]
+    mag=mag1[im]
+    magt=mag7[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot1,im, 0)
+    delete(phot7,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i18:
+    x=where(catalogi1==i)
+    x2=where(catalogi8==i)
+    im=imagei1[x]
+    im2=imagei8[x2]
+    mag=mag1[im]
+    magt=mag8[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot1,im, 0)
+    delete(phot8,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i19:
+    x=where(catalogi1==i)
+    x2=where(catalogi9==i)
+    im=imagei1[x]
+    im2=imagei9[x2]
+    mag=mag1[im]
+    magt=mag9[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot1,im, 0)
+    delete(phot9,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i23:
+    x=where(catalogi2==i)
+    x2=where(catalogi3==i)
+    im=imagei2[x]
+    im2=imagei3[x2]
+    mag=mag2[im]
+    magt=mag3[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot2,im, 0)
+    delete(phot3,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i24:
+    x=where(catalogi2==i)
+    x2=where(catalogi4==i)
+    im=imagei2[x]
+    im2=imagei4[x2]
+    mag=mag2[im]
+    magt=mag4[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot2,im, 0)
+    delete(phot4,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i25:
+    x=where(catalogi2==i)
+    x2=where(catalogi5==i)
+    im=imagei2[x]
+    im2=imagei5[x2]
+    mag=mag2[im]
+    magt=mag5[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot2,im, 0)
+    delete(phot5,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i26:
+    x=where(catalogi2==i)
+    x2=where(catalogi6==i)
+    im=imagei2[x]
+    im2=imagei6[x2]
+    mag=mag2[im]
+    magt=mag6[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot2,im, 0)
+    delete(phot6,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i27:
+    x=where(catalogi2==i)
+    x2=where(catalogi7==i)
+    im=imagei2[x]
+    im2=imagei7[x2]
+    mag=mag2[im]
+    magt=mag7[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot2,im, 0)
+    delete(phot7,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i28:
+    x=where(catalogi2==i)
+    x2=where(catalogi8==i)
+    im=imagei2[x]
+    im2=imagei8[x2]
+    mag=mag2[im]
+    magt=mag8[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot2,im, 0)
+    delete(phot8,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i29:
+    x=where(catalogi2==i)
+    x2=where(catalogi9==i)
+    im=imagei2[x]
+    im2=imagei9[x2]
+    mag=mag2[im]
+    magt=mag9[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot2,im, 0)
+    delete(phot9,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i34:
+    x=where(catalogi3==i)
+    x2=where(catalogi4==i)
+    im=imagei3[x]
+    im2=imagei4[x2]
+    mag=mag3[im]
+    magt=mag4[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot3,im, 0)
+    delete(phot4,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i35:
+    x=where(catalogi3==i)
+    x2=where(catalogi5==i)
+    im=imagei3[x]
+    im2=imagei5[x2]
+    mag=mag3[im]
+    magt=mag5[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot3,im, 0)
+    delete(phot5,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i36:
+    x=where(catalogi3==i)
+    x2=where(catalogi6==i)
+    im=imagei3[x]
+    im2=imagei6[x2]
+    mag=mag3[im]
+    magt=mag6[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot3,im, 0)
+    delete(phot6,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i37:
+    x=where(catalogi3==i)
+    x2=where(catalogi7==i)
+    im=imagei3[x]
+    im2=imagei7[x2]
+    mag=mag3[im]
+    magt=mag7[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot3,im, 0)
+    delete(phot7,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i38:
+    x=where(catalogi3==i)
+    x2=where(catalogi8==i)
+    im=imagei3[x]
+    im2=imagei8[x2]
+    mag=mag3[im]
+    magt=mag8[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot3,im, 0)
+    delete(phot8,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i39:
+    x=where(catalogi3==i)
+    x2=where(catalogi9==i)
+    im=imagei3[x]
+    im2=imagei9[x2]
+    mag=mag3[im]
+    magt=mag9[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot3,im, 0)
+    delete(phot9,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i45:
+    x=where(catalogi4==i)
+    x2=where(catalogi5==i)
+    im=imagei4[x]
+    im2=imagei5[x2]
+    mag=mag4[im]
+    magt=mag5[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot4,im, 0)
+    delete(phot5,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i46:
+    x=where(catalogi4==i)
+    x2=where(catalogi6==i)
+    im=imagei4[x]
+    im2=imagei6[x2]
+    mag=mag4[im]
+    magt=mag6[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot4,im, 0)
+    delete(phot6,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i47:
+    x=where(catalogi4==i)
+    x2=where(catalogi7==i)
+    im=imagei4[x]
+    im2=imagei7[x2]
+    mag=mag4[im]
+    magt=mag7[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot4,im, 0)
+    delete(phot7,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i48:
+    x=where(catalogi4==i)
+    x2=where(catalogi8==i)
+    im=imagei4[x]
+    im2=imagei8[x2]
+    mag=mag4[im]
+    magt=mag5[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot4,im, 0)
+    delete(phot8,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i49:
+    x=where(catalogi4==i)
+    x2=where(catalogi9==i)
+    im=imagei4[x]
+    im2=imagei9[x2]
+    mag=mag4[im]
+    magt=mag9[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot4,im, 0)
+    delete(phot9,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i56:
+    x=where(catalogi5==i)
+    x2=where(catalogi6==i)
+    im=imagei5[x]
+    im2=imagei6[x2]
+    mag=mag5[im]
+    magt=mag6[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot5,im, 0)
+    delete(phot6,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i57:
+    x=where(catalogi5==i)
+    x2=where(catalogi7==i)
+    im=imagei5[x]
+    im2=imagei7[x2]
+    mag=mag5[im]
+    magt=mag7[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot5,im, 0)
+    delete(phot7,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i58:
+    x=where(catalogi5==i)
+    x2=where(catalogi8==i)
+    im=imagei5[x]
+    im2=imagei8[x2]
+    mag=mag5[im]
+    magt=mag8[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot5,im, 0)
+    delete(phot8,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+for i in i59:
+    x=where(catalogi5==i)
+    x2=where(catalogi9==i)
+    im=imagei5[x]
+    im2=imagei9[x2]
+    mag=mag5[im]
+    magt=mag9[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot5,im, 0)
+    delete(phot9,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i67:
+    x=where(catalogi6==i)
+    x2=where(catalogi7==i)
+    im=imagei6[x]
+    im2=imagei7[x2]
+    mag=mag6[im]
+    magt=mag7[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot6,im, 0)
+    delete(phot7,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i68:
+    x=where(catalogi6==i)
+    x2=where(catalogi8==i)
+    im=imagei6[x]
+    im2=imagei8[x2]
+    mag=mag6[im]
+    magt=mag8[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot6,im, 0)
+    delete(phot8,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i69:
+    x=where(catalogi6==i)
+    x2=where(catalogi9==i)
+    im=imagei6[x]
+    im2=imagei9[x2]
+    mag=mag6[im]
+    magt=mag9[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot6,im, 0)
+    delete(phot9,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i78:
+    x=where(catalogi7==i)
+    x2=where(catalogi8==i)
+    im=imagei7[x]
+    im2=imagei8[x2]
+    mag=mag7[im]
+    magt=mag8[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot7,im, 0)
+    delete(phot8,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i79:
+    x=where(catalogi7==i)
+    x2=where(catalogi9==i)
+    im=imagei7[x]
+    im2=imagei9[x2]
+    mag=mag7[im]
+    magt=mag9[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot7,im, 0)
+    delete(phot9,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+
+for i in i89:
+    x=where(catalogi8==i)
+    x2=where(catalogi9==i)
+    im=imagei8[x]
+    im2=imagei9[x2]
+    mag=mag8[im]
+    magt=mag9[im2]
+    #immag1.append(mag)
+    #immag2.append(magt)
+    delete(phot8,im, 0)
+    delete(phot9,im2, 0)
+    zerr=where(catalog814[i]==0)
+    q=min(min(zerr))
+    catalog814[i,q]=min(mag)
+    catalog814[i,q+1]=min(magt)
+savetxt("catalog814.txt",catalog814)
+
+def avgvals(array):
+    mmm=len(array)
+    N=arange(0,mmm,1)
+    for i in N:
+        zerz=where(array[i]==0)
+        q=min(min(zerz))
+        qi=arange(0,q,1)
+        num=min(min(zerz))
+        avmag=0
+        if q > 0:
+            while q > 0:
+                for p in qi:
+                    avmag=avmag+array[i,p]
+                    q=q-1
+                    avgmag=avmag/num
+            array[i,0]=avgmag
+
+avgvals(catalog814)
+savetxt("814catalog.txt",catalog814,fmt="%f")
+cat814=array(catalog814[:,0],ndmin=2)
+catt814=transpose(cat814)
+cat6819=append(catalog606,catt814,axis=1)
+savetxt("6819catalog.txt",cat6819,fmt="%f")
