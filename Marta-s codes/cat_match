@@ -1,0 +1,114 @@
+from astropy.coordinates import SkyCoord
+from astropy import units as u
+from astropy.coordinates import match_coordinates_sky
+import numpy as np
+import numpy
+from numpy import *
+
+numpy.set_printoptions(threshold=numpy.nan)
+
+HC = np.loadtxt("HHC.txt", delimiter = ",")
+HL = np.loadtxt("HHL.txt", delimiter = ",")
+R = np.loadtxt("HR.txt", delimiter = ",")
+U = np.loadtxt("HU.txt", delimiter = ",")
+
+ra_hc = np.transpose(HC[:,3])
+dec_hc = np.transpose(HC[:,4])
+ra_hl = np.transpose(HL[:,3])
+dec_hl = np.transpose(HL[:,4])
+ra_r = np.transpose(R[:,3])
+dec_r = np.transpose(R[:,4])
+ra_u = np.transpose(U[:,3])
+dec_u = np.transpose(U[:,4])
+
+catalog = SkyCoord(ra=ra_r, dec=dec_r, unit = "deg") # This is the r file since it has most entries
+hl = SkyCoord(ra=ra_hl, dec=dec_hl, unit = "deg")
+hc = SkyCoord(ra=ra_hc, dec=dec_hc, unit = "deg")
+u = SkyCoord(ra=ra_u, dec=dec_u, unit = "deg")
+
+idx_hl, d2d_hl, d3d_hl = hl.match_to_catalog_sky(catalog) 
+idx_hc, d2d_hc, d3d_hc = hc.match_to_catalog_sky(catalog)
+idx_u, d2d_u, d3d_u = u.match_to_catalog_sky(catalog) 
+
+d2d_hl = d2d_hl.deg
+d2d_hc = d2d_hc.deg
+d2d_u = d2d_u.deg
+    
+indexes_hl = np.arange(len(idx_hl))
+indexes_hc = np.arange(len(idx_hc))
+indexes_u = np.arange(len(idx_u))
+
+hl_table = np.column_stack((indexes_hl, idx_hl, d2d_hl))
+hc_table = np.column_stack((indexes_hc, idx_hc, d2d_hc))
+u_table = np.column_stack((indexes_u, idx_u, d2d_u))
+
+hl_table = hl_table[where(hl_table[:,2] <= 0.0001)]
+hc_table = hc_table[where(hc_table[:,2] <= 0.0001)]
+u_table = u_table[where(u_table[:,2] <= 0.0001)]
+
+template = R
+u_and_r = np.empty((0, 23))
+
+for templaterow in template:
+    indextemplate = int(templaterow[0])
+    column_matches = u_table[:, 1]
+    if numpy.in1d(indextemplate, column_matches).all() == True:
+        for row in u_table:
+            matched_inx = int(row[0])            
+            ref_inx = int(row[1])
+            sep = row[2]
+            if indextemplate == ref_inx:
+                u_data = U[matched_inx]
+                mergedsep = np.append(u_data, sep)
+                mergedrows = np.concatenate((templaterow, mergedsep))
+                u_and_r = np.append(u_and_r, [mergedrows], axis = 0)
+    else:
+        zeros = np.zeros((12,), dtype=int)
+        mergedrows = np.concatenate((templaterow, zeros))
+        u_and_r = np.append(u_and_r, [mergedrows], axis = 0)
+
+template = u_and_r
+u_r_hl = np.empty((0, 34))
+        
+for templaterow in template:
+    indextemplate = int(templaterow[0])
+    column_matches = hl_table[:, 1]
+    if numpy.in1d(indextemplate, column_matches).all() == True:
+        for row in hl_table:
+            matched_inx = int(row[0])            
+            ref_inx = int(row[1])
+            sep = row[2]
+            if indextemplate == ref_inx:
+                hl_data = HL[matched_inx]
+                mergedsep = np.append(hl_data, sep)
+                mergedrows = np.concatenate((templaterow, mergedsep))
+                u_r_hl = np.append(u_r_hl, [mergedrows], axis = 0)
+    else:
+        zeros = np.zeros((11,), dtype=int)
+        mergedrows = np.concatenate((templaterow, zeros))
+        u_r_hl = np.append(u_r_hl, [mergedrows], axis = 0)
+
+template = u_r_hl
+u_r_hl_hc = np.empty((0, 45))
+
+for templaterow in template:
+    indextemplate = int(templaterow[0])
+    column_matches = hc_table[:, 1]
+    if numpy.in1d(indextemplate, column_matches).all() == True:
+        for row in hc_table:
+            matched_inx = int(row[0])            
+            ref_inx = int(row[1])
+            sep = row[2]
+            if indextemplate == ref_inx:
+                hc_data = HC[matched_inx]
+                mergedsep = np.append(hc_data, sep)
+                mergedrows = np.concatenate((templaterow, mergedsep))
+                u_r_hl_hc = np.append(u_r_hl_hc, [mergedrows], axis = 0)
+    else:
+        zeros = np.zeros((11,), dtype=int)
+        mergedrows = np.concatenate((templaterow, zeros))
+        u_r_hl_hc = np.append(u_r_hl_hc, [mergedrows], axis = 0)
+        
+print (u_r_hl_hc)
+
+np.savetxt("Hmatched.txt", u_r_hl_hc)
