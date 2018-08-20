@@ -43,13 +43,14 @@ catmag=[]
 immag=[]
 matchmag=[]
 for i in imagei:
+    x=where(imagei==i)
+    c=catalogi[x]
+    cmag = cat1mags[c]
     mag = cat2mags[i]
-    catmag.append(mag)
-    delete(catalist2,i, 0)
-for i in catalogi:
-    mag = cat1mags[i]
     immag.append(mag)
-    delete(catalist1,i, 0)
+    catmag.append(cmag)
+    ib2o02phot=delete(catalist1,c, 0)
+    ib2o01phot=delete(catalist2,i, 0)
 for i in matchi:
     mag=(catmag[i]+immag[i])/2
     matchmag.append(mag)
@@ -75,7 +76,7 @@ for i in matchi:
 nmaga=array(matchmag,ndmin=2)
 anmag=transpose(nmaga)
 share0102=append(matchwcs,zeros, axis=1)
-shared0102=append(share0102,anmag,axis=1)
+shared0102=append(share0102,nmaga,axis=1)
 #add the shared values to the photometry list
 catalist3=concatenate((catalist1,catalist2,shared0102),axis=0)
 catalogpos3=array((catalist3[:,0],catalist3[:,1]))

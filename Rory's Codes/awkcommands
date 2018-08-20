@@ -37,3 +37,4 @@ awk '$16 + O != 99.999' godstars.txt > goodstars.txt
 awk '{print $3,$4}' goodstars.txt > positions.txt
 awk '{print $12,$14,$25,$38,$51,$64,$77,$90,$103,$116,$129,$142}' godstars.txt > countcols.txt
 awk '{print $3,$4,$16}' goodstars.txt > CMD.txt
+awk '$6 + 0 != 0' 6819catalog.txt > 6819matchedcatalog.txt

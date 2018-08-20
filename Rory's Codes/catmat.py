@@ -43,19 +43,27 @@ savetxt("catdisib2o02ib2o01.txt", catdisrn, fmt='%d %d %d %f')
 imagei = asarray(catdisrn[:,1],dtype=int)
 catalogi = asarray(catdisrn[:,2],dtype=int)
 matchi = asarray(catdisrn[:,0],dtype=int)
+photo01=column_stack((catalogi,imagei))
 ib2o02mags=loadtxt('/Volumes/64FLASH/dolphotresults/ib2o02/mags.txt')
 ib2o01mags=loadtxt('/Volumes/64FLASH/dolphotresults/ib2o01/mags.txt')
 catmag=[]
 immag=[]
 matchmag=[]
 for i in imagei:
-    mag = ib2o02mags[i,2]
-    catmag.append(mag)
-    delete(ib2o02phot,i, 0)
-for i in catalogi:
+    x=where(imagei==i)
+    c=catalogi[x]
+    cmag = ib2o02mags[c,2]
     mag = ib2o01mags[i,2]
     immag.append(mag)
-    delete(ib2o01phot,i, 0)
+    catmag.append(cmag)
+    ib2o02phot=delete(ib2o02phot,c, 0)
+    ib2o01phot=delete(ib2o01phot,i, 0)
+#for i in catalogi:
+#    x=where(catalogi==i)
+#    c=imagei[x]
+#    mag = ib2o01mags[i,2]
+#    immag.append(mag)
+#    ib2o01phot=delete(ib2o01phot,c, 0)
 for i in matchi:
     mag=(catmag[i]+immag[i])/2
     matchmag.append(mag)
@@ -81,7 +89,7 @@ for i in matchi:
 nmaga=array(matchmag,ndmin=2)
 anmag=transpose(nmaga)
 share0102=append(matchwcs,zeros, axis=1)
-shared0102=append(share0102,anmag,axis=1)
+shared0102=append(share0102,nmaga,axis=1)
 #add the shared values to the photometry list
 catalist1=concatenate((ib2o01phot,ib2o02phot,shared0102),axis=0)
 catalogpos1=array((catalist1[:,0],catalist1[:,1]))
